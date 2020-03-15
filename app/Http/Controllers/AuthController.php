@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use Hash;
+use Validator;
 
 class AuthController extends Controller
 {
@@ -13,6 +14,18 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         //you can write Validator here
+        $validation = Validator::make($request->all(),[
+            'name' => 'required|max:9',
+            'email' => 'required|email',
+            'password'=> 'required',
+        ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'success' => false,
+                'data' => $validation->errors()->all(),
+            ]);
+        }
+        else {
         $user = User::create([
              'name'     => $request->name,
              'email'    => $request->email,
@@ -27,6 +40,7 @@ class AuthController extends Controller
             'data'       => 'Successfull register',
             'token'      => $token,
         ]);
+        }
     }
 
     public function update(Request $request)
@@ -34,7 +48,7 @@ class AuthController extends Controller
         $token = $request->token;
         $user = auth()->user($token); 
         if ($user) {
-            $user = User::update([
+            $user = User::where('id', $user->id)->update([
                 'name'     => $request->name,
                 'email'    => $request->email,
                 'password' => $request->password,
@@ -47,9 +61,20 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-    {
+    {   
+
         $credentials = $request->only('email', 'password');
-        
+        $validation = Validator::make($credentials,[
+            'email' => 'required|email',
+            'password'=> 'required',
+        ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'success' => false,
+                'data' => $validation->errors()->all(),
+            ]);
+        }
+        else {        
         if (! $token = auth()->attempt($credentials)) {//hemcininde burda, sen decyrpt etmeden ozu edib check edir
             return response()->json([
                 'success' => false,
@@ -62,6 +87,7 @@ class AuthController extends Controller
             'token'      => $token,
         ]);
     }
+}
 
     //buda token invalidate edir
     public function logout()
