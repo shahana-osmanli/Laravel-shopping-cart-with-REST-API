@@ -22,6 +22,8 @@ Route::post('/login', 'AuthController@login');
 Route::post('/logout', 'AuthController@logout');
 Route::put('/update', 'AuthController@update');
 Route::get('/get', 'AuthController@getAuthUser');
+Route::get('products', 'ProductController@getAll');
+Route::get('products/{id}', 'ProductController@getOne');
 
 
 Route::get('/test', function(){
