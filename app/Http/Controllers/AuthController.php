@@ -30,11 +30,8 @@ class AuthController extends Controller
              'name'     => $request->name,
              'email'    => $request->email,
              'password' => $request->password,
-         ]);// hash true olması burda password fieldini ozu encyrpt edir, bazaya baxsan goreceysen ozu sifreleyib atir bazaya
-        //if you want to sign in after register
-        $token = auth()->login($user);//burda qeyd oldugdan sonra hemin melumatlarla token yaradir tokeni qaytaririq responsla 
-        //sonrada yazacagimiz funksyalarda ist edeceksen, meselen user update hissesinde
-        //hansi user oldugunu tutmaq meqsedi ile
+         ]);
+        $token = auth()->login($user);
         return response()->json([
             'success'    => true,
             'data'       => 'Successfull register',
@@ -44,14 +41,28 @@ class AuthController extends Controller
     }
 
     public function update(Request $request)
-    {
+    {   
+
+        $validation = Validator::make($request->all(),[
+            'name' => 'required|max:9',
+            'email' => 'required|email',
+            'password'=> 'required',
+        ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'success' => false,
+                'data' => $validation->errors()->all(),
+            ]);
+        }
+        else {
+        //return response()->json(['data' => $request->all()]);
         $token = $request->token;
         $user = auth()->user($token); 
         if ($user) {
             $user = User::where('id', $user->id)->update([
                 'name'     => $request->name,
                 'email'    => $request->email,
-                'password' => $request->password,
+                'password' => Hash::make($request->password),
             ]);
             return response()->json([
                 'success'    => true,
@@ -59,6 +70,7 @@ class AuthController extends Controller
             ]);
         }
     }
+}
 
     public function login(Request $request)
     {   
@@ -75,7 +87,7 @@ class AuthController extends Controller
             ]);
         }
         else {        
-        if (! $token = auth()->attempt($credentials)) {//hemcininde burda, sen decyrpt etmeden ozu edib check edir
+        if (! $token = auth()->attempt($credentials)) {
             return response()->json([
                 'success' => false,
                 'data'  => 'Wrong Crendentials'
@@ -89,7 +101,6 @@ class AuthController extends Controller
     }
 }
 
-    //buda token invalidate edir
     public function logout()
     {
         auth()->logout();

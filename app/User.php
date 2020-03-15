@@ -12,9 +12,9 @@ class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
-    protected $table = 'users'; //her yeni Class yaradanda table adi mutleqdi
+    protected $table = 'users'; 
 
-    protected $fillable = [ //postmani qosh
+    protected $fillable = [ 
         'name', 
         'email', 
         'password',
@@ -24,9 +24,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
     ];
 
-    public $timestamps = false; //bu hisseleri kechen defe demishdim
-
-    //bu funksyalar JWT(JSON WEB TOKEN) default funksyalaridi
+    public $timestamps = false; 
 
     //**************** */
     public function getJWTIdentifier()

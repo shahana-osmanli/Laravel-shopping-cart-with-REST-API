@@ -23,7 +23,6 @@ Route::post('/logout', 'AuthController@logout');
 Route::put('/update', 'AuthController@update');
 Route::get('/get', 'AuthController@getAuthUser');
 
-//test ucun bir route yazaq
 
 Route::get('/test', function(){
     return 'Login olunub';
