@@ -10,7 +10,7 @@ class ProductController extends Controller
 
     public function getAll()
     {
-        return Product::get(['name', 'description', 'price'])->all();
+        return Product::get()->all();
     }
 
     public function getOne($id)
