@@ -25,6 +25,8 @@ Route::get('/get', 'AuthController@getAuthUser');
 Route::get('products', 'ProductController@getAll');
 Route::get('products/{id}', 'ProductController@getOne');
 
+Route::post('/addtocart/{id}', 'CartController@addToCart');
+
 
 Route::get('/test', function(){
     return 'Login olunub';
