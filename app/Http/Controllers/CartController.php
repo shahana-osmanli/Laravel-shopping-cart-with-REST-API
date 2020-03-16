@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    //requestle gelecek token ve quantity
     public function addToCart(Request $request, $id)
     {
         /*return response()->json([
