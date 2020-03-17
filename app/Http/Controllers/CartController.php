@@ -16,12 +16,12 @@ class CartController extends Controller
         $token = $request->token;
         $user = auth()->user($token); 
         $quantity = $request->quantity;
-        $existing = Cart::where('product_id', $id)->where('user_id', $user->id)->get()->all();
+        $existing = Cart::where('product_id', $id)->where('user_id', $user->id)->get()[0];
         
-        if ($quantity == 0) {
+        if ($quantity == 0) { 
             $quantity = 1;
         }
-
+        ///return response()->json(['data' => $existing[0]->quantity]);
         if ($user && $existing == false) {
             $cart = Cart::create([
                 'user_id'     => $user->id,
@@ -78,7 +78,7 @@ class CartController extends Controller
     {
         $token = $request->token;
         $user = auth()->user($token); 
-        $cart = Cart::where('user_id', $user->id)->where('product_id', $id)->get();
+        $cart = Cart::where('user_id', $user->id)->where('product_id', $id)->get()[0];
         if ($user) {
             return $cart->quantity;
         }
@@ -88,12 +88,13 @@ class CartController extends Controller
     {
         $token = $request->token;
         $user = auth()->user($token); 
-        $existing = Cart::where('user_id', $user->id)->where('product_id', $id)->get();
+        $existing = Cart::where('user_id', $user->id)->where('product_id', $id)->get()[0];
 
         if ($user) {
             $cart = $existing->update([
                 'quantity' => $existing->quantity + 1,
             ]);
+            return $existing->quantity;
         }
 
     }
@@ -102,17 +103,14 @@ class CartController extends Controller
     {
         $token = $request->token;
         $user = auth()->user($token); 
-        $existing = Cart::where('user_id', $user->id)->where('product_id', $id)->get();
+        $existing = Cart::where('user_id', $user->id)->where('product_id', $id)->get()[0];
 
         if ($user) {
             if ($existing->quantity > 0) {
                 $cart = $existing->update([
                     'quantity' => $existing->quantity - 1,
                 ]);
-                return response()->json([
-                    'succes' => true,
-                    'message' => 'Decreased',
-                ]);
+                return $existing->quantity;
             }
             else CartController::deleteProduct($request, $id);
       }
