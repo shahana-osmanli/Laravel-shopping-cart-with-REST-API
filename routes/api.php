@@ -29,8 +29,8 @@ Route::post('/addtocart/{id}', 'CartController@addToCart');
 Route::get('/getcart', 'CartController@getCartProducts');
 Route::delete('/deleteproduct/{id}', 'CartController@deleteProduct');
 Route::get('/getquantity/{id}', 'CartController@getQuantity');
-Route::put('/increase', 'CartController@increase');
-Route::put('/decrease', 'CartController@decrease');
+Route::put('/increase/{id}', 'CartController@increase');
+Route::put('/decrease/{id}', 'CartController@decrease');
 
 
 

@@ -103,15 +103,15 @@ class CartController extends Controller
         $token = $request->token;
         $user = auth()->user($token); 
         $existing = Cart::where('user_id', $user->id)->where('product_id', $id)->get();
-        return response()->json([
-            'success'    => true,
-            'data'       => $existing->quantity,
-        ]);
 
         if ($user) {
             if ($existing->quantity > 0) {
                 $cart = $existing->update([
                     'quantity' => $existing->quantity - 1,
+                ]);
+                return response()->json([
+                    'succes' => true,
+                    'message' => 'Decreased',
                 ]);
             }
             else CartController::deleteProduct($request, $id);
