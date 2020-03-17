@@ -22,10 +22,16 @@ Route::post('/login', 'AuthController@login');
 Route::post('/logout', 'AuthController@logout');
 Route::put('/update', 'AuthController@update');
 Route::get('/get', 'AuthController@getAuthUser');
-Route::get('products', 'ProductController@getAll');
-Route::get('products/{id}', 'ProductController@getOne');
+Route::get('/products', 'ProductController@getAll');
+Route::get('/products/{id}', 'ProductController@getOne');
 
 Route::post('/addtocart/{id}', 'CartController@addToCart');
+Route::get('/getcart', 'CartController@getCartProducts');
+Route::delete('/deleteproduct/{id}', 'CartController@deleteProduct');
+Route::get('/getquantity/{id}', 'CartController@getQuantity');
+Route::put('/increase', 'CartController@increase');
+Route::put('/decrease', 'CartController@decrease');
+
 
 
 Route::get('/test', function(){
