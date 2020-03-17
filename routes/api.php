@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 Route::post('/register', 'AuthController@register');
 Route::post('/login', 'AuthController@login');
 Route::post('/logout', 'AuthController@logout');
@@ -32,7 +33,8 @@ Route::get('/getquantity/{id}', 'CartController@getQuantity');
 Route::put('/increase/{id}', 'CartController@increase');
 Route::put('/decrease/{id}', 'CartController@decrease');
 
-
+Route::post('/addwish/{id}', 'WishlistController@addWish');
+Route::post('/deletewish/{id}', 'WishlistController@deleteWish');
 
 Route::get('/test', function(){
     return 'Login olunub';
