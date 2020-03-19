@@ -9,23 +9,23 @@ use DB;
 
 class ProductController extends Controller
 {
-    /*public function checkUser(Request $request = null)
-    {   
-        if ($request != null) {
-            $token = $request->token;
-            $user = auth()->user($token); 
-            return true;
-        }
-        else return false;
-    }*/
-
     public function getAll(Request $request)
     {
+        $wishlist = 0;
         if ($request->token == null) {
-            return Product::get()->except('status');
+            for( $i = 0; $i < count(Product::get()); $i++ ) {
+                echo $wishlist;
+                printf (Product::get()[$i]);
+                echo PHP_EOL;
+            }
         }
         else {
-            return Product::get()->all();
+            $wishlist = 1;
+            for( $i = 0; $i < count(Product::get()); $i++ ) {
+                echo $wishlist;
+                printf (Product::get()[$i]);
+                echo PHP_EOL;
+            }
         }
     }
 

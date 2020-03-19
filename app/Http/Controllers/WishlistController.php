@@ -18,9 +18,6 @@ class WishlistController extends Controller
                 'user_id' => $user->id,
                 'product_id' => $id,
                 ]);
-            $product = Product::where('id', $id)->update([
-                'status' => 1,
-            ]);
             return response()->json([
                 'success' => true,
                 'data' => 'Product added to Wishlist',
@@ -34,9 +31,6 @@ class WishlistController extends Controller
         $user = auth()->user($token); 
         if ($user) {
             $wishlist = Wishlist::where('user_id', $user->id)->where('product_id',$id)->delete();
-            $product = Product::where('id', $id)->update([
-                'status' => 0,
-            ]);
             return response()->json([
                 'success' => true,
                 'data' => 'Product deleted from Wishlist',
