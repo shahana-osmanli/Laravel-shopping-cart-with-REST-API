@@ -9,16 +9,15 @@ use DB;
 
 class WishlistController extends Controller
 {   
-    public static function checkWishlist($product_id)
+    public function checkWishlist($product_id)
     {
-        $wishlist = Wishlist::where('product_id', $product_id)->get();
-        return $wishlist ? true : false;
+        return Wishlist::where('product_id', $product_id);
     }
     public function addWish(Request $request, $id)
     {
-        $token = $request->token;
-        $user = auth()->user($token); 
-        if ($user) {
+        $user = auth()->user(); 
+        $existing = Wishlist::where('user_id', $user->id)->where('product_id', $id)->first();
+        if ($user && $existing == false) {
             $wishlist = Wishlist::where('user_id', $user->id)->where('product_id',$id)->create([
                 'user_id' => $user->id,
                 'product_id' => $id,
@@ -28,6 +27,7 @@ class WishlistController extends Controller
                 'data' => 'Product added to Wishlist',
             ]);
         }
+        else return "Product is already in wishlist";
     }
 //aaa ele json-un icinde versem? he jsonun icheinde vermelisen ama ki
 //sende wishlist baasi var ordaki datalar ile user_id ni muqayise edeceysen hansilar beraberdi wishlist:1 ekshalda 0
@@ -37,8 +37,7 @@ class WishlistController extends Controller
  // user login olubsa olmayibsa her shey bunun ustundedi) tamam. Okay,nese lazm olsa yazarsan
     public function deleteWish(Request $request, $id)
     {
-        $token = $request->token;
-        $user = auth()->user($token); 
+        $user = auth()->user(); 
         if ($user) {
             $wishlist = Wishlist::where('user_id', $user->id)->where('product_id',$id)->delete();
             return response()->json([

@@ -33,8 +33,8 @@ Route::get('/getquantity/{id}', 'CartController@getQuantity'); //bax db-ni goste
 Route::put('/increase/{id}', 'CartController@increase');//indi daxil oldugum userin id-si 8-di
 Route::put('/decrease/{id}', 'CartController@decrease');
 
-Route::post('/addwish/{id}', 'WishlistController@addWish');
-Route::post('/deletewish/{id}', 'WishlistController@deleteWish');
+Route::post('/addwish/{id}', 'WishlistController@addWish')->middleware('jwt.auth');
+Route::post('/deletewish/{id}', 'WishlistController@deleteWish')->middleware('jwt.auth');
 
 Route::get('/test', function(){
     return 'Login olunub';

@@ -21,13 +21,9 @@ class CartController extends Controller
             $quantity = 1;
         }
         if ($user) {
-            //o biri bu usere aid deyiulki ona gore error qaytarirda
-            // get[0]ci ile first -un fergi nedi ki? 
             //first = arrya() -> burda index istemir
-           // get[0] = array[0] -> ama burda imenni 0-ci indexi isteyir hee tamam
-           //
+           // get[0] = array[0] -> ama burda imenni 0-ci indexi isteyir 
             $existing = Cart::where('user_id', $user->id)->where('product_id', $id)->first();
-            $existing = $existing == null ? false : Cart::where('user_id', $user->id)->where('product_id', $id)->get()[0] ;
             if ($existing == false) {
             $cart = Cart::create([
                 'user_id'     => $user->id,

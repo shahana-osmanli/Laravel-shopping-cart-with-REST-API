@@ -14,6 +14,7 @@ class ProductController extends Controller
     {
         $token = $request->token;
         $user = auth()->user($token);
+        
         $product = Product::get()->all();
         $array = [];
         if ($user) {
