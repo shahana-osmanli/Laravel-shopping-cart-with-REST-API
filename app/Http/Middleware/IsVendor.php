@@ -1,0 +1,30 @@
+<?php
+namespace App\Http\Middleware;
+
+use Closure;
+use Auth;
+
+class IsVendor
+{
+    //vendor login yazmisan? yoo okay onda user logine sorgu gonder sonra bazada hemin userin tipini deiw vbendor et oldu
+    /**
+     * Get the path the user should be redirected to when they are not authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return string|null
+     */
+    public function handle($request, Closure $next)
+    {
+        //userin olub olmadigini ve varsa tipinin vendor olmasini yoxladiq
+        //eger duzgundurse her shey novbeti urle gonderir/ routes-den gelen hansidisa
+        if (Auth::check() && Auth::user()->type == "vendor") {
+            return $next($request);
+        }else{
+            abort(404);
+        }
+        //okay
+        //indi baSha salm 
+        //umumiyyetle middleware nedi ordan bashlayim yoxsa iSVendor kifayetdi? isvendoru bildim umumiyyetle middleware-i oki
+        
+    }
+}

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\Cart;
 use App\Product;
 use App\User;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
 
@@ -13,16 +13,22 @@ class CartController extends Controller
     public function addToCart(Request $request, $id)
     {
         
-        $token = $request->token;
-        $user = auth()->user($token); 
+       // $token = $request->token;//bunu yerine
+        $user = auth()->user(); //bele de ishleyecey
         $quantity = $request->quantity;
-        $existing = Cart::where('product_id', $id)->where('user_id', $user->id)->get()[0];
         
         if ($quantity == 0) { 
             $quantity = 1;
         }
-        ///return response()->json(['data' => $existing[0]->quantity]);
-        if ($user && $existing == false) {
+        if ($user) {
+            //o biri bu usere aid deyiulki ona gore error qaytarirda
+            // get[0]ci ile first -un fergi nedi ki? 
+            //first = arrya() -> burda index istemir
+           // get[0] = array[0] -> ama burda imenni 0-ci indexi isteyir hee tamam
+           //
+            $existing = Cart::where('user_id', $user->id)->where('product_id', $id)->first();
+            $existing = $existing == null ? false : Cart::where('user_id', $user->id)->where('product_id', $id)->get()[0] ;
+            if ($existing == false) {
             $cart = Cart::create([
                 'user_id'     => $user->id,
                 'product_id'  => $id,
@@ -34,16 +40,17 @@ class CartController extends Controller
                'data'       => $cart,
            ]);
         }
-        else if($user && $existing) {
+            else {
             $cart = Cart::where('user_id', $user->id)->update([
                 'quantity'    => $quantity + $existing->quantity,
             ]);
            return response()->json([
                'success'    => true,
-               'message'    => 'Product is added',
+               'message'    => 'Product is updated',
                'data'       => $cart,
            ]);
         }
+    }
         else {
             return response()->json([
                 'success'    => false,
@@ -56,7 +63,11 @@ class CartController extends Controller
         $token = $request->token;
         $user = auth()->user($token); 
         if ($user) {
-            return Cart::where('user_id', $user->id)->get();
+            //return Cart::where('user_id', $user->id)->get();
+            return DB::table('users')
+            ->where('users.id', $user->id)
+            ->join('carts', 'carts.user_id', 'users.id')
+            ->get();
         }
         else return 'Auth required';
         

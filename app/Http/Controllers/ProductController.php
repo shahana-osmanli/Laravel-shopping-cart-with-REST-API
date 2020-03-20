@@ -5,27 +5,47 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Product;
 use App\User;
+use App\Wishlist;
 use DB;
 
 class ProductController extends Controller
 {
     public function getAll(Request $request)
     {
-        $wishlist = 0;
-        if ($request->token == null) {
-            for( $i = 0; $i < count(Product::get()); $i++ ) {
-                echo $wishlist;
-                printf (Product::get()[$i]);
-                echo PHP_EOL;
+        $token = $request->token;
+        $user = auth()->user($token);
+        $product = Product::get()->all();
+        $array = [];
+        if ($user) {
+            for($i = 0; $i < count($product); $i++){
+                if (WishlistController::checkWishlist($product[$i]->id)) {
+                    $return = response()->json([
+                        'data' => $product[$i],
+                        'wishlist' => 1,
+                    ]);
+                    array_push($array, $return);
+                }
+                else {
+                    $return = response()->json([
+                        'data' => $product[$i],
+                        'wishlist' => 0,
+                    ]);
+                    array_push($array, $return);
+                }
             }
+            return $array;
         }
         else {
-            $wishlist = 1;
-            for( $i = 0; $i < count(Product::get()); $i++ ) {
-                echo $wishlist;
-                printf (Product::get()[$i]);
-                echo PHP_EOL;
+            $product = Product::get()->all();
+            $array = [];
+            for($i = 0; $i < count($product); $i++){
+                $return = response()->json([
+                    'data' => $product[$i],
+                    'wishlist' => 0,
+                ]);
+                array_push($array, $return);
             }
+            return $array;
         }
     }
 

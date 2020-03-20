@@ -26,11 +26,11 @@ Route::get('/get', 'AuthController@getAuthUser');
 Route::get('/products', 'ProductController@getAll');
 Route::get('/products/{id}', 'ProductController@getOne');
 
-Route::post('/addtocart/{id}', 'CartController@addToCart');
+Route::post('/addtocart/{id}', 'CartController@addToCart')->middleware('jwt.auth');//yazsan kifayetdi eger login olmayibsa ozu401 qaytaraca usere
 Route::get('/getcart', 'CartController@getCartProducts');
-Route::delete('/deleteproduct/{id}', 'CartController@deleteProduct');
-Route::get('/getquantity/{id}', 'CartController@getQuantity');
-Route::put('/increase/{id}', 'CartController@increase');
+Route::delete('/deleteproduct/{id}', 'CartController@deleteProduct');//Aydin oldu ? hee tam ) Ela onda IsUser-i ozun yazarsan gelmisken o biri bug-a da bax da:) baxaq hansi idi? addtocart postmandae run et
+Route::get('/getquantity/{id}', 'CartController@getQuantity'); //bax db-ni gosterirem birinci
+Route::put('/increase/{id}', 'CartController@increase');//indi daxil oldugum userin id-si 8-di
 Route::put('/decrease/{id}', 'CartController@decrease');
 
 Route::post('/addwish/{id}', 'WishlistController@addWish');
@@ -39,3 +39,13 @@ Route::post('/deletewish/{id}', 'WishlistController@deleteWish');
 Route::get('/test', function(){
     return 'Login olunub';
 })->middleware('jwt.auth');
+
+
+Route::get('/vendor/test', function(){
+    return 'Vendor Page';
+})->middleware(['jwt.auth', 'is_vendor']);//burda jwt.auth userin login olub olmadigini yoxlayir, gel kodlarionda bir bug gosterim))
+
+//endbashadda routes den gedey, yazdigin her middleware-ni burda tetbiq edirsen
+//bir nove 
+
+//nbunu evez edir  aha
