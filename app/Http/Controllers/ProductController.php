@@ -14,12 +14,11 @@ class ProductController extends Controller
     {
         $token = $request->token;
         $user = auth()->user($token);
-        
         $product = Product::get()->all();
         $array = [];
         if ($user) {
             for($i = 0; $i < count($product); $i++){
-                if (WishlistController::checkWishlist($product[$i]->id)) {
+                if (WishlistController::checkWishlist($product[$i]->id, $user->id)) {
                     $return = response()->json([
                         'data' => $product[$i],
                         'wishlist' => 1,

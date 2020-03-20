@@ -22,9 +22,5 @@ class IsVendor
         }else{
             abort(404);
         }
-        //okay
-        //indi baSha salm 
-        //umumiyyetle middleware nedi ordan bashlayim yoxsa iSVendor kifayetdi? isvendoru bildim umumiyyetle middleware-i oki
-        
     }
 }
