@@ -36,8 +36,6 @@ class ProductController extends Controller
             return $array;
         }
         else {
-            $product = Product::get()->all();
-            $array = [];
             for($i = 0; $i < count($product); $i++){
                 $return = response()->json([
                     'data' => $product[$i],
