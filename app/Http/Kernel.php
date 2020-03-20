@@ -4,6 +4,7 @@ namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use App\Http\Middleware\IsVendor;
+use App\Http\Middleware\IsUser;
 
 class Kernel extends HttpKernel
 {
@@ -66,5 +67,6 @@ class Kernel extends HttpKernel
         'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class, //burda jwt.auth middleware butun routlarda ist ede bilerik
         'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
         'is_vendor' => IsVendor::class,
+        'is_user' => IsUser::class,
     ];
 }
