@@ -10,41 +10,94 @@ use DB;
 
 class ProductController extends Controller
 {
+    public function addProduct(Request $request, $id)
+    {
+        $validation = Validator::make($request->all(),[
+            'name' => 'required',
+            'description' => 'required|min:9',
+            'price'=> 'required|integer',
+        ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'success' => false,
+                'data' => $validation->errors()->all(),
+            ]);
+        }
+        $user = auth()->user();
+        if ($user) {
+            $product = Product::create([
+                'name'        => $request->name,
+                'description' => $request->description,
+                'price'       => $request->price,
+            ]);
+           return response()->json([
+               'success'    => true,
+               'data'       => 'Product added',
+           ]);
+        }
+    }
+
+    public function updateProduct(Request $request, $id)
+    {
+        $validation = Validator::make($request->all(),[
+            'name' => 'required',
+            'description' => 'required|min:9',
+            'price'=> 'required|integer',
+        ]);
+        if ($validation->fails()) {
+            return response()->json([
+                'success' => false,
+                'data' => $validation->errors()->all(),
+            ]);
+        }
+        $user = auth()->user();
+        if ($user) {
+            $product = Product::where('id', $id)->update([
+                'name'        => $request->name,
+                'description' => $request->description,
+                'price'       => $request->price,
+            ]);
+            return response()->json([
+                'success'    => true,
+                'data'       => 'Successfull update',
+            ]);
+        }
+    }
+
     public function getAll(Request $request)
     {
         $token = $request->token;
         $user = auth()->user($token);
-        $product = Product::get()->all();
-        $array = [];
+        $product = Product::get();
+         $array = [];
         if ($user) {
             for($i = 0; $i < count($product); $i++){
-                if (WishlistController::checkWishlist($product[$i]->id, $user->id)) {
+                if (Wishlist::checkWishlist($product[$i]->id, $user->id)) {
                     $return = response()->json([
                         'data' => $product[$i],
-                        'wishlist' => 1,
                     ]);
                     array_push($array, $return);
+                    $product[$i]->wishlist = 1;
                 }
                 else {
                     $return = response()->json([
                         'data' => $product[$i],
-                        'wishlist' => 0,
                     ]);
                     array_push($array, $return);
+                    $product[$i]->wishlist = 0;
                 }
             }
-            return $array;
         }
         else {
             for($i = 0; $i < count($product); $i++){
                 $return = response()->json([
                     'data' => $product[$i],
-                    'wishlist' => 0,
                 ]);
                 array_push($array, $return);
+                $product[$i]->wishlist = 0;
             }
-            return $array;
         }
+        return response()->json(['data' =>$product]); 
     }
 
     public function getOne($id)

@@ -8,14 +8,12 @@ use Hash;
 use Validator;
 
 class AuthController extends Controller
-{
-    
-    
+{    
     public function register(Request $request)
     {
         //you can write Validator here
         $validation = Validator::make($request->all(),[
-            'name' => 'required|max:9',
+            'name' => 'required',
             'email' => 'required|email',
             'password'=> 'required',
         ]);
@@ -25,11 +23,12 @@ class AuthController extends Controller
                 'data' => $validation->errors()->all(),
             ]);
         }
-        else {
+        $request->type = ($request->type == null || $request->type != 'vendor') ? 'user' : 'vendor';
         $user = User::create([
              'name'     => $request->name,
              'email'    => $request->email,
              'password' => $request->password,
+             'type'     => $request->type,
          ]);
         $token = auth()->login($user);
         return response()->json([
@@ -37,12 +36,10 @@ class AuthController extends Controller
             'data'       => 'Successfull register',
             'token'      => $token,
         ]);
-        }
     }
 
     public function update(Request $request)
     {   
-
         $validation = Validator::make($request->all(),[
             'name' => 'required|max:9',
             'email' => 'required|email',
@@ -54,10 +51,7 @@ class AuthController extends Controller
                 'data' => $validation->errors()->all(),
             ]);
         }
-        else {
-        //return response()->json(['data' => $request->all()]);
-        $token = $request->token;
-        $user = auth()->user($token); 
+        $user = auth()->user(); 
         if ($user) {
             $user = User::where('id', $user->id)->update([
                 'name'     => $request->name,
@@ -70,7 +64,6 @@ class AuthController extends Controller
             ]);
         }
     }
-}
 
     public function login(Request $request)
     {   
@@ -85,9 +78,8 @@ class AuthController extends Controller
                 'success' => false,
                 'data' => $validation->errors()->all(),
             ]);
-        }
-        else {        
-        if (! $token = auth()->attempt($credentials)) {
+        }       
+        if (! $user = auth()->attempt($credentials)) {
             return response()->json([
                 'success' => false,
                 'data'  => 'Wrong Crendentials'
@@ -96,10 +88,9 @@ class AuthController extends Controller
         return response()->json([
             'success'    => true,
             'data'       => 'Successfull login',
-            'token'      => $token,
+            'token'      => $user,
         ]);
     }
-}
 
     public function logout()
     {
@@ -109,8 +100,7 @@ class AuthController extends Controller
 
     public function getAuthUser(Request $request)
     {        
-        $token = $request->token;
-        $user = auth()->user($token); 
+        $user = auth()->user(); 
  
         return response()->json(['user' => $user]);
     }

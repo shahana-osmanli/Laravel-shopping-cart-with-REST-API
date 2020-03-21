@@ -9,10 +9,7 @@ use DB;
 
 class WishlistController extends Controller
 {   
-    public function checkWishlist($product_id, $user_id)
-    {
-        return Wishlist::where('product_id', $product_id)->where('user_id',$user_id);
-    }
+    
     public function addWish(Request $request, $id)
     {
         $user = auth()->user(); 
