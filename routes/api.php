@@ -24,18 +24,24 @@ Route::post('/logout', 'AuthController@logout');
 Route::put('/update', 'AuthController@update')->middleware('jwt.auth');
 Route::get('/get', 'AuthController@getAuthUser')->middleware('jwt.auth');
 
-//Route::post('/register', 'VendorController@registerVendor');
+Route::post('/vendor/register', 'AuthController@register');
+Route::post('/vendor/login', 'AuthController@login');
+Route::put('/vendor/update', 'AuthController@update');
 
 
-Route::get('/products', 'ProductController@getAll');
+Route::get('/products', 'ProductController@getAll')->middleware('jwt.auth');
 Route::get('/products/{id}', 'ProductController@getOne');
-Route::post('/addproduct', 'ProductController@addProduct')->middleware(['jwt.auth', 'is_vendor']);
+
+Route::post('/product/add', 'ProductController@addProduct')->middleware(['jwt.auth', 'is_vendor']);
+Route::put('/product/{id}/update', 'ProductController@updateProduct')->middleware(['jwt.auth', 'is_vendor']);
+Route::delete('/vendor/product/{id}', 'ProductController@deleteProduct')->middleware(['jwt.auth', 'is_vendor']);
+Route::get('/vendor/products', 'VendorController@Show')->middleware(['jwt.auth', 'is_vendor']);
 
 Route::post('/addtocart/{id}', 'CartController@addToCart')->middleware('jwt.auth');//yazsan kifayetdi eger login olmayibsa ozu401 qaytaraca usere
 Route::get('/getcart', 'CartController@getCartProducts');
-Route::delete('/deletefromcart/{id}', 'CartController@deleteProduct');//Aydin oldu ? hee tam ) Ela onda IsUser-i ozun yazarsan gelmisken o biri bug-a da bax da:) baxaq hansi idi? addtocart postmandae run et
-Route::get('/getquantity/{id}', 'CartController@getQuantity'); //bax db-ni gosterirem birinci
-Route::put('/increase/{id}', 'CartController@increase');//indi daxil oldugum userin id-si 8-di
+Route::delete('/deletefromcart/{id}', 'CartController@deleteProduct');
+Route::get('/getquantity/{id}', 'CartController@getQuantity');
+Route::put('/increase/{id}', 'CartController@increase');
 Route::put('/decrease/{id}', 'CartController@decrease');
 
 Route::post('/addwish/{id}', 'WishlistController@addWish')->middleware('jwt.auth');

@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+use App\Product;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -26,6 +27,11 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     public $timestamps = false; 
+
+    public function products()
+    {
+        return $this->hasMany('App\Product');
+    }
 
     //**************** */
     public function getJWTIdentifier()

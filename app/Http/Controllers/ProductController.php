@@ -26,6 +26,7 @@ class ProductController extends Controller
         $user = auth()->user();
         if ($user) {
             $product = Product::create([
+                'user_id'     => $user->id,
                 'name'        => $request->name,
                 'description' => $request->description,
                 'price'       => $request->price,
@@ -64,12 +65,23 @@ class ProductController extends Controller
         }
     }
 
+    public function deleteProduct(Request $request, $id)
+    {   
+        $user = auth()->user(); 
+        if ($user) {
+            User::find($user->id)->products()->where('id', $id)->delete();
+            return response()->json([
+               'success'    => true,
+               'data'       => 'Product removed',
+           ]);
+        }
+    }
+
     public function getAll(Request $request)
     {
-        $token = $request->token;
-        $user = auth()->user($token);
+        $user = auth()->user();
         $product = Product::get();
-         $array = [];
+        $array = [];
         if ($user) {
             for($i = 0; $i < count($product); $i++){
                 if (Wishlist::checkWishlist($product[$i]->id, $user->id)) {

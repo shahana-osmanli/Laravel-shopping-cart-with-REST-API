@@ -1,29 +1,17 @@
 <?php
-/*
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
-use Hash;
-use Validator;
+use App\Product;
 
 class VendorController extends Controller
 {
-    public function registerVendor(Request $request)
+    public function Show()
     {
-        $auth = new AuthController;
-        return $auth->register($request);
+        $user = auth()->user();
+        $products = User::find($user->id)->products()->get();
+        return $products;
     }
-
-    public function loginVendor(Request $request)
-    {
-        $auth = new AuthController;
-        return $auth->login($request);
-    }
-
-    public function updateVendor(Request $request)
-    {
-        $auth = new AuthController;
-        return $auth->update($request);
-    }
-}*/
+}
