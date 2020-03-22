@@ -7,10 +7,11 @@ use App\Product;
 use App\User;
 use App\Wishlist;
 use DB;
+use Validator;
 
 class ProductController extends Controller
 {
-    public function addProduct(Request $request, $id)
+    public function addProduct(Request $request)
     {
         $validation = Validator::make($request->all(),[
             'name' => 'required',
