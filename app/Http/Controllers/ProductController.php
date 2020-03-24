@@ -113,9 +113,10 @@ class ProductController extends Controller
         return response()->json(['data' =>$product]); 
     }
 
-    public function getOne($id)
+    public function getOne(Request $request, $id)
     {
         $product = Product::find($id);
+        //return $request->header('X-Lang-Key');
     
         if (!$product) {
             return response()->json([
@@ -123,11 +124,14 @@ class ProductController extends Controller
                 'data' => 'Sorry, product with id ' . $id . ' cannot be found'
             ], 400);
         }
-        else {
-            return response()->json([
-                'success'=>true,
-                'data'=>$product
-            ]);
+        else if ($request->header('X-Lang-Key')){
+            return DB::table('products')
+            ->where('products.id', $id)
+            ->join('translation', 'translation.product_id', 'products.id')
+            ->where('language.code', $request->header('X-Lang-Key'))
+            ->join('language', 'language.id', 'translation.language_id')
+            ->get();
         }
+        else return $product;
     }
 }
