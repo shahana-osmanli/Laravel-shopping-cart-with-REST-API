@@ -29,7 +29,7 @@ Route::post('/vendor/login', 'AuthController@login');
 Route::put('/vendor/update', 'AuthController@update');
 
 
-Route::get('/products', 'ProductController@getAll')->middleware('jwt.auth');
+Route::get('/products', 'ProductController@getAll');
 Route::get('/products/{id}', 'ProductController@getOne');
 
 Route::post('/product/add', 'ProductController@addProduct')->middleware(['jwt.auth', 'is_vendor']);
