@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use App\Product;
 use App\User;
 use App\Wishlist;
+use App\File;
 use DB;
 use Validator;
 use App;
@@ -15,8 +17,6 @@ class ProductController extends Controller
     public function addProduct(Request $request)
     {
         $validation = Validator::make($request->all(),[
-            'name' => 'required',
-            'description' => 'required|min:9',
             'price'=> 'required|integer',
         ]);
         if ($validation->fails()) {
@@ -29,14 +29,24 @@ class ProductController extends Controller
         if ($user) {
             $product = Product::create([
                 'user_id'     => $user->id,
-                'name'        => $request->name,
-                'description' => $request->description,
                 'price'       => $request->price,
             ]);
+            if ($request->hasFile('file')) {
+                $files = $request->file('file');
+                foreach ($files as $file) {
+                    $fileName = $file->getClientOriginalName();
+                    $file->move(public_path('/uploads'), $fileName);
+                    $fileUrl = 'public/uploads/'.$fileName;
+                    $upload = File::create([
+                        'product_id' => $product->id,
+                        'url' => $fileUrl,
+                    ]);
+                }
+            }
             return response()->json([
-             'success'    => true,
-             'data'       => 'Product added',
-         ]);
+                'success' => true,
+                'message' => 'Uploaded successfully'
+            ]);
         }
     }
 

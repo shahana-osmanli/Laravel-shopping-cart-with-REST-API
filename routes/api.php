@@ -37,6 +37,8 @@ Route::put('/product/{id}/update', 'ProductController@updateProduct')->middlewar
 Route::delete('/vendor/product/{id}', 'ProductController@deleteProduct')->middleware(['jwt.auth', 'is_vendor']);
 Route::get('/vendor/products', 'VendorController@Show')->middleware(['jwt.auth', 'is_vendor']);
 
+Route::post('/upload/file/{id}', 'FileController@fileUpload')->middleware(['jwt.auth', 'is_vendor']);
+
 Route::post('/addtocart/{id}', 'CartController@addToCart')->middleware('jwt.auth');//yazsan kifayetdi eger login olmayibsa ozu401 qaytaraca usere
 Route::get('/getcart', 'CartController@getCartProducts');
 Route::delete('/deletefromcart/{id}', 'CartController@deleteProduct');
