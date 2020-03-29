@@ -29,8 +29,8 @@ class ProductController extends Controller
         }
         $user = auth()->user();
         $lang = Language::select('language.code')->get();
-        $name = [$request->name['en'], $request->name['ru'], $request->name['az']];
-        $description = [$request->description['en'], $request->description['ru'], $request->description['az']];
+        $name = $request->name;
+        $description = $request->description;
         if ($user) {
             $product = Product::create([
                 'user_id'     => $user->id,
@@ -48,7 +48,7 @@ class ProductController extends Controller
                     ]);
                 }
             }
-            for ($i = 0; $i < 3; $i++) { 
+            for ($i = 0; $i < count($name); $i++) { 
                 $language = Language::where('code', $lang[$i]->code)->get();
                 $translation = Translation::create([
                     'language_id' => $language[0]->id,

@@ -30,6 +30,8 @@ Route::put('/vendor/update', 'AuthController@update');
 
 Route::get('/products', 'ProductController@getAll');
 Route::get('/products/{id}', 'ProductController@getOne');
+Route::post('/send/products', 'CheckoutController@Send')->middleware('jwt.auth');
+
 
 Route::post('/product/add', 'ProductController@addProduct')->middleware(['jwt.auth', 'is_vendor']);
 Route::put('/product/{id}/update', 'ProductController@updateProduct')->middleware(['jwt.auth', 'is_vendor']);
