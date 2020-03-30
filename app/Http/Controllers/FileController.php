@@ -13,6 +13,7 @@ class FileController extends Controller
     {
         $user = auth()->user();
         $product = Product::where('user_id', $user->id)->findOrFail($id);
+        //$product = Product::find($id)->user()->get();
             if ($request->hasFile('file')) {
                 $files = $request->file('file');
                 foreach ($files as $file) {
