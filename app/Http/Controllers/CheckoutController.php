@@ -11,19 +11,20 @@ use App\Checkout;
 class CheckoutController extends Controller
 {
     public function Send(Request $request)
-    {   $total = 0;
+    {   
+        $total = 0;
         $user = auth()->user();
         $product = $request->products;
         if ($user) {
             for($i = 0; $i < count($product); $i++){
                 $total += self::calculateTotalPrice($user->id, $product[$i]);
             }
-        //$cart = Cart::where('user_id', $user->id)->where('product_id', $product[$i])->get();- hələ ki qalsın belə
+        $cart = Cart::where('user_id', $user->id)->whereIn('product_id', $product)->get();
+            if($cart){
                 $cartProduct = DB::table('carts')
                         ->select(['product_id', 'quantity'])
                         ->where('user_id', $user->id)
                         ->get();
-                        //return $cartProduct;
                 $checkout = Checkout::create([
                     'user_id' => $user->id,
                     'products' => json_encode($cartProduct),
@@ -33,6 +34,10 @@ class CheckoutController extends Controller
                 Cart::where('user_id', $user->id)->delete();                    
 
             return "Product sended to checkout";
+            }
+            else {
+                return "Refresh your cart and try again";
+            }
         }
     }
 
