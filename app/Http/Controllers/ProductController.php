@@ -143,13 +143,13 @@ class ProductController extends Controller
                 $product[$i]->wishlist = 0;
             }
         }
-        return $product;
+        return $product->paginate('10');
     }
 
     public function getOne(Request $request, $id)
     {
         App::setLocale($request->header("X-Lang-Key"));
-        $product = Product::select('products.*', 'translation.description')
+        $product = Product::select('products.*', 'translation.name', 'translation.description')
         ->where('products.id', $id)
         ->leftJoin('language', function($join){
             $join->where('language.code','=', App::getLocale());
@@ -170,5 +170,27 @@ class ProductController extends Controller
             'success' => true,
             'data' => $product,
         ]);
+    }
+
+    public function Search(Request $request)
+    {
+        App::setLocale($request->header("X-Lang-Key"));
+        $query = $request->get('query');
+        $search = Translation::where('name','LIKE','%'.$query.'%')->get();
+        $products = [];
+        for($i = 0; $i < count($search); $i++){
+            $product = Product::select('products.*', 'translation.name', 'translation.description')
+                        ->where('products.id', '=', $search[$i]->product_id)
+                        ->leftJoin('language', function($join){
+                            $join->where('language.code','=', App::getLocale());
+                        })
+                        ->leftJoin('translation', function($join){
+                            $join->on('translation.language_id','=','language.id');
+                            $join->on('translation.product_id','=','products.id');
+                        })
+                        ->first();
+                array_push($products, $product);
+        }
+        return $products;
     }
 }

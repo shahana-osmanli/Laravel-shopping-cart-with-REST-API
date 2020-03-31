@@ -18,6 +18,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('/email', 'MailController@sendMail');
+
 Route::post('/register', 'AuthController@register');
 Route::post('/login', 'AuthController@login');
 Route::post('/logout', 'AuthController@logout');
@@ -28,6 +30,7 @@ Route::post('/vendor/register', 'AuthController@register');
 Route::post('/vendor/login', 'AuthController@login');
 Route::put('/vendor/update', 'AuthController@update');
 
+Route::get('/searchfor', 'ProductController@Search');
 Route::get('/products', 'ProductController@getAll');
 Route::get('/products/{id}', 'ProductController@getOne');
 Route::post('/send/products', 'CheckoutController@Send')->middleware('jwt.auth');
