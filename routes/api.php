@@ -62,5 +62,3 @@ Route::get('/test', function(){
 Route::get('/vendor/test', function(){
     return 'Vendor Page';
 })->middleware(['jwt.auth', 'is_vendor']);//burda jwt.auth userin login olub olmadigini yoxlayir, gel kodlarionda bir bug gosterim))
-
-//endbashadda routes den gedey, yazdigin her middleware-ni burda tetbiq edirsen
