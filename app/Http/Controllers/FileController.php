@@ -30,6 +30,6 @@ class FileController extends Controller
                 'success' => true,
                 'message' => 'Uploaded successfully',
             ]);
-        $img = Image::make('public/foo.jpg')->resize(320, 240)->insert('public/watermark.png');
+        //$img = Image::make('public/foo.jpg')->resize(320, 240)->insert('public/watermark.png');
     }
 }
