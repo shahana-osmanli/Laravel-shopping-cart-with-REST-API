@@ -36,11 +36,13 @@ class FileController extends Controller
 
     public function Watermark(Request $request)
     {
-        /*$photo = Image::make($request->file('file')->getRealPath())
+        /*
+        $fileName = $request->file('file')->getClientOriginalName();
+        $photo = Image::make($request->file('file')->getRealPath())
                         ->resize(300, 400)
                         ->insert(public_path('/uploads'), 'watermark.png')
                         ->save();
-        $photo->move(public_path('/uploads/edited'));
+        $photo->move(public_path('/uploads/edited'), $fileName);
         return 'ok';*/
         if($request->hasFile('file')) {
             //get filename with extension
