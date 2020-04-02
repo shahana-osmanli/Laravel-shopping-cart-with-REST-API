@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Image;
+use Storage;
 use App\File;
 use App\Product;
 
@@ -31,15 +32,41 @@ class FileController extends Controller
                 'success' => true,
                 'message' => 'Uploaded successfully',
             ]);
-        //$img = Image::make('public/foo.jpg')->resize(320, 240)->insert('public/watermark.png');
     }
 
     public function Watermark(Request $request)
     {
-        $fileName = $request->file('file')->getClientOriginalName(); 
-        return $request->file('file');
-        $photo = Image::make($request->file('file'))->resize(300, 400)->insert('/uploads/watermark.png')->save();
-        $photo->move(public_path('/uploads'), $fileName);
-        return 'ok';
+        /*$photo = Image::make($request->file('file')->getRealPath())
+                        ->resize(300, 400)
+                        ->insert(public_path('/uploads'), 'watermark.png')
+                        ->save();
+        $photo->move(public_path('/uploads/edited'));
+        return 'ok';*/
+        if($request->hasFile('file')) {
+            //get filename with extension
+            $filenamewithextension = $request->file('file')->getClientOriginalName();
+     
+            //get filename without extension
+            $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
+     
+            //get file extension
+            $extension = $request->file('file')->getClientOriginalExtension();
+     
+            //filename to store
+            $filenametostore = $filename.'_'.time().'.'.$extension;
+     
+            //Upload File
+            $request->file('file')->storeAs('public/uploads', $filenametostore);
+            $request->file('profile_image')->storeAs('public/uploads/edited', $filenametostore);
+     
+            //Resize image here
+            $thumbnailpath = public_path('storage/public/uploads/edited/'.$filenametostore);
+            $img = Image::make($thumbnailpath)->resize(300, 400, function($constraint) {
+                $constraint->aspectRatio();
+            });
+            $img->save($thumbnailpath);
+     
+            return 'ok';
+        }
     }
 }
