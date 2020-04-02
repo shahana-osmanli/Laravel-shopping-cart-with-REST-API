@@ -43,7 +43,9 @@ class FileController extends Controller
                         ->insert(public_path('/uploads'), 'watermark.png')
                         ->save();
         $photo->move(public_path('/uploads/edited'), $fileName);
-        return 'ok';*/
+        return 'ok';
+        */
+        
         if($request->hasFile('file')) {
             //get filename with extension
             $filenamewithextension = $request->file('file')->getClientOriginalName();
@@ -62,11 +64,11 @@ class FileController extends Controller
             $request->file('profile_image')->storeAs('public/uploads/edited', $filenametostore);
      
             //Resize image here
-            $thumbnailpath = public_path('storage/public/uploads/edited/'.$filenametostore);
-            $img = Image::make($thumbnailpath)->resize(300, 400, function($constraint) {
+            $editedpath = public_path('storage/public/uploads/edited/'.$filenametostore);
+            $img = Image::make($editedpath)->resize(300, 400, function($constraint) {
                 $constraint->aspectRatio();
             });
-            $img->save($thumbnailpath);
+            $img->save($editedpath);
      
             return 'ok';
         }
