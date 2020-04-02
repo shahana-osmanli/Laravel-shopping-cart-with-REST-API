@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Image;
 use App\File;
 use App\Product;
 
@@ -31,5 +32,14 @@ class FileController extends Controller
                 'message' => 'Uploaded successfully',
             ]);
         //$img = Image::make('public/foo.jpg')->resize(320, 240)->insert('public/watermark.png');
+    }
+
+    public function Watermark(Request $request)
+    {
+        $fileName = $request->file('file')->getClientOriginalName(); 
+        return $request->file('file');
+        $photo = Image::make($request->file('file'))->resize(300, 400)->insert('/uploads/watermark.png')->save();
+        $photo->move(public_path('/uploads'), $fileName);
+        return 'ok';
     }
 }
