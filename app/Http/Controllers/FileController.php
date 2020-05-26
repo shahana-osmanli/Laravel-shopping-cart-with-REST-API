@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Image;
+use Intervention\Image\Facades\Image;
 use Storage;
 use App\File;
 use App\Product;
@@ -15,23 +15,22 @@ class FileController extends Controller
     {
         $user = auth()->user();
         $product = Product::where('user_id', $user->id)->findOrFail($id);
-        //$product = Product::find($id)->user()->get();
-            if ($request->hasFile('file')) {
-                $files = $request->file('file');
-                foreach ($files as $file) {
-                    $fileName = $file->getClientOriginalName();
-                    $file->move(public_path('/uploads'), $fileName);
-                    $fileUrl = 'public/uploads/'.$fileName;
-                    $upload = File::create([
-                        'product_id' => $product->id,
-                        'url' => $fileUrl,
-                    ]);
-                }
+        if ($request->hasFile('file')) {
+            $files = $request->file('file');
+            foreach ($files as $file) {
+                $fileName = $file->getClientOriginalName();
+                $file->move(public_path('/uploads'), $fileName);
+                $fileUrl = 'public/uploads/' . $fileName;
+                File::create([
+                    'product_id' => $product->id,
+                    'url' => $fileUrl,
+                ]);
             }
-            return response()->json([
-                'success' => true,
-                'message' => 'Uploaded successfully',
-            ]);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Uploaded successfully',
+        ]);
     }
 
     public function Watermark(Request $request)
@@ -45,31 +44,31 @@ class FileController extends Controller
         $photo->move(public_path('/uploads/edited'), $fileName);
         return 'ok';
         */
-        
-        if($request->hasFile('file')) {
+
+        if ($request->hasFile('file')) {
             //get filename with extension
             $filenamewithextension = $request->file('file')->getClientOriginalName();
-     
+
             //get filename without extension
             $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
-     
+
             //get file extension
             $extension = $request->file('file')->getClientOriginalExtension();
-     
+
             //filename to store
-            $filenametostore = $filename.'_'.time().'.'.$extension;
-     
+            $filenametostore = $filename . '_' . time() . '.' . $extension;
+
             //Upload File
             $request->file('file')->storeAs('public/uploads', $filenametostore);
             $request->file('profile_image')->storeAs('public/uploads/edited', $filenametostore);
-     
+
             //Resize image here
-            $editedpath = public_path('storage/public/uploads/edited/'.$filenametostore);
-            $img = Image::make($editedpath)->resize(300, 400, function($constraint) {
+            $editedpath = public_path('storage/public/uploads/edited/' . $filenametostore);
+            $img = Image::make($editedpath)->resize(300, 400, function ($constraint) {
                 $constraint->aspectRatio();
             });
             $img->save($editedpath);
-     
+
             return 'ok';
         }
     }

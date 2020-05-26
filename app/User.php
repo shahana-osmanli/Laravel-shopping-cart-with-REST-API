@@ -1,23 +1,23 @@
 <?php
 
 namespace App;
+
 use App\Product;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-//Add this line
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
-    protected $table = 'users'; 
+    protected $table = 'users';
 
-    protected $fillable = [ 
-        'name', 
-        'email', 
+    protected $fillable = [
+        'name',
+        'email',
         'password',
         'type',
     ];
@@ -26,7 +26,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
     ];
 
-    public $timestamps = false; 
+    public $timestamps = false;
 
     public function products()
     {
@@ -45,9 +45,9 @@ class User extends Authenticatable implements JWTSubject
     }
     public function setPasswordAttribute($password)
     {
-        if ( !empty($password) ) {
+        if (!empty($password)) {
             $this->attributes['password'] = bcrypt($password);
         }
-    } 
+    }
     ///************** */
 }

@@ -10,16 +10,15 @@ use App\Wishlist;
 use App\File;
 use App\Translation;
 use App\Language;
-use DB;
-use Validator;
-use App;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\App;
 
 class ProductController extends Controller
 {
     public function addProduct(Request $request)
     {
-        $validation = Validator::make($request->all(),[
-            'price'=> 'required|integer',
+        $validation = Validator::make($request->all(), [
+            'price' => 'required|integer',
         ]);
         if ($validation->fails()) {
             return response()->json([
@@ -41,16 +40,16 @@ class ProductController extends Controller
                 foreach ($files as $file) {
                     $fileName = $file->getClientOriginalName();
                     $file->move(public_path('/uploads'), $fileName);
-                    $fileUrl = 'public/uploads/'.$fileName;
-                    $upload = File::create([
+                    $fileUrl = 'public/uploads/' . $fileName;
+                    File::create([
                         'product_id' => $product->id,
                         'url' => $fileUrl,
                     ]);
                 }
             }
-            for ($i = 0; $i < count($name); $i++) { 
+            for ($i = 0; $i < count($name); $i++) {
                 $language = Language::where('code', $lang[$i]->code)->get();
-                $translation = Translation::create([
+                Translation::create([
                     'language_id' => $language[0]->id,
                     'product_id' => $product->id,
                     'name' => $name[$i],
@@ -66,10 +65,10 @@ class ProductController extends Controller
 
     public function updateProduct(Request $request, $id)
     {
-        $validation = Validator::make($request->all(),[
+        $validation = Validator::make($request->all(), [
             'name' => 'required',
             'description' => 'required|min:9',
-            'price'=> 'required|integer',
+            'price' => 'required|integer',
         ]);
         if ($validation->fails()) {
             return response()->json([
@@ -79,7 +78,7 @@ class ProductController extends Controller
         }
         $user = auth()->user();
         if ($user) {
-            $product = Product::where('id', $id)->update([
+            Product::where('id', $id)->update([
                 'name'        => $request->name,
                 'description' => $request->description,
                 'price'       => $request->price,
@@ -92,14 +91,14 @@ class ProductController extends Controller
     }
 
     public function deleteProduct(Request $request, $id)
-    {   
-        $user = auth()->user(); 
+    {
+        $user = auth()->user();
         if ($user) {
             User::find($user->id)->products()->where('id', $id)->delete();
             return response()->json([
-             'success'    => true,
-             'data'       => 'Product removed',
-         ]);
+                'success'    => true,
+                'data'       => 'Product removed',
+            ]);
         }
     }
 
@@ -109,37 +108,35 @@ class ProductController extends Controller
         $product = Product::get();
         App::setLocale($request->header("X-Lang-Key"));
         if ($user) {
-            for($i = 0; $i < count($product); $i++){
+            for ($i = 0; $i < count($product); $i++) {
                 $product[$i] = Product::select('products.*', 'translation.name', 'translation.description')
-                ->where('products.id', $product[$i]->id)
-                ->leftJoin('language', function($join){
-                    $join->where('language.code','=', App::getLocale());
-                })
-                ->leftJoin('translation', function($join){
-                    $join->on('translation.language_id','=','language.id');
-                    $join->on('translation.product_id','=','products.id');
-                })
-                ->first();
+                    ->where('products.id', $product[$i]->id)
+                    ->leftJoin('language', function ($join) {
+                        $join->where('language.code', '=', App::getLocale());
+                    })
+                    ->leftJoin('translation', function ($join) {
+                        $join->on('translation.language_id', '=', 'language.id');
+                        $join->on('translation.product_id', '=', 'products.id');
+                    })
+                    ->first();
                 if (Wishlist::checkWishlist($product[$i]->id, $user->id)) {
                     $product[$i]->wishlist = 1;
-                }
-                else {
+                } else {
                     $product[$i]->wishlist = 0;
                 }
             }
-        }
-        else {
-            for($i = 0; $i < count($product); $i++){
+        } else {
+            for ($i = 0; $i < count($product); $i++) {
                 $product[$i] = Product::select('products.*', 'translation.name', 'translation.description')
-                ->where('products.id', $product[$i]->id)
-                ->leftJoin('language', function($join){
-                    $join->where('language.code','=', App::getLocale());
-                })
-                ->leftJoin('translation', function($join){
-                    $join->on('translation.language_id','=','language.id');
-                    $join->on('translation.product_id','=','products.id');
-                })
-                ->first();
+                    ->where('products.id', $product[$i]->id)
+                    ->leftJoin('language', function ($join) {
+                        $join->where('language.code', '=', App::getLocale());
+                    })
+                    ->leftJoin('translation', function ($join) {
+                        $join->on('translation.language_id', '=', 'language.id');
+                        $join->on('translation.product_id', '=', 'products.id');
+                    })
+                    ->first();
                 $product[$i]->wishlist = 0;
             }
         }
@@ -150,20 +147,20 @@ class ProductController extends Controller
     {
         App::setLocale($request->header("X-Lang-Key"));
         $product = Product::select('products.*', 'translation.name', 'translation.description')
-        ->where('products.id', $id)
-        ->leftJoin('language', function($join){
-            $join->where('language.code','=', App::getLocale());
-        })
-        ->leftJoin('translation', function($join){
-            $join->on('translation.language_id','=','language.id');
-            $join->on('translation.product_id','=','products.id');
-        })
-        ->first();
+            ->where('products.id', $id)
+            ->leftJoin('language', function ($join) {
+                $join->where('language.code', '=', App::getLocale());
+            })
+            ->leftJoin('translation', function ($join) {
+                $join->on('translation.language_id', '=', 'language.id');
+                $join->on('translation.product_id', '=', 'products.id');
+            })
+            ->first();
 
         if (!$product) {
             return response()->json([
                 'success' => false,
-                'data' => 'Sorry, product with id ' . $id . ' cannot be found'
+                'data' => 'Sorry, product with id ' . $id . ' can\'t be found'
             ], 400);
         }
         return response()->json([
@@ -176,20 +173,20 @@ class ProductController extends Controller
     {
         App::setLocale($request->header("X-Lang-Key"));
         $query = $request->get('query');
-        $search = Translation::where('name','LIKE','%'.$query.'%')->get();
+        $search = Translation::where('name', 'LIKE', '%' . $query . '%')->get();
         $products = [];
-        for($i = 0; $i < count($search); $i++){
+        for ($i = 0; $i < count($search); $i++) {
             $product = Product::select('products.*', 'translation.name', 'translation.description')
-                        ->where('products.id', '=', $search[$i]->product_id)
-                        ->leftJoin('language', function($join){
-                            $join->where('language.code','=', App::getLocale());
-                        })
-                        ->leftJoin('translation', function($join){
-                            $join->on('translation.language_id','=','language.id');
-                            $join->on('translation.product_id','=','products.id');
-                        })
-                        ->first();
-                array_push($products, $product);
+                ->where('products.id', '=', $search[$i]->product_id)
+                ->leftJoin('language', function ($join) {
+                    $join->where('language.code', '=', App::getLocale());
+                })
+                ->leftJoin('translation', function ($join) {
+                    $join->on('translation.language_id', '=', 'language.id');
+                    $join->on('translation.product_id', '=', 'products.id');
+                })
+                ->first();
+            array_push($products, $product);
         }
         return $products;
     }

@@ -6,7 +6,6 @@ use Auth;
 
 class IsVendor
 {
-    //vendor login yazmisan? yoo okay onda user logine sorgu gonder sonra bazada hemin userin tipini deiw vbendor et oldu
     /**
      * Get the path the user should be redirected to when they are not authenticated.
      *
@@ -15,8 +14,6 @@ class IsVendor
      */
     public function handle($request, Closure $next)
     {
-        //userin olub olmadigini ve varsa tipinin vendor olmasini yoxladiq
-        //eger duzgundurse her shey novbeti urle gonderir/ routes-den gelen hansidisa
         if (Auth::check() && Auth::user()->type == "vendor") {
             return $next($request);
         }else{

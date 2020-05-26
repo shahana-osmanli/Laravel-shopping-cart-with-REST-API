@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('/watermark', 'FileController@Watermark'); //elə belə
+Route::post('/watermark', 'FileController@Watermark');
 
 Route::get('/docx', 'DocumentController@fileDoc');
 
@@ -46,7 +46,7 @@ Route::get('/vendor/products', 'VendorController@Show')->middleware(['jwt.auth',
 
 Route::post('/upload/file/{id}', 'FileController@fileUpload')->middleware(['jwt.auth', 'is_vendor']);
 
-Route::post('/addtocart/{id}', 'CartController@addToCart')->middleware('jwt.auth');//eger login olmayibsa ozu401 qaytaraca usere
+Route::post('/addtocart/{id}', 'CartController@addToCart')->middleware('jwt.auth');
 Route::get('/getcart', 'CartController@getCartProducts');
 Route::delete('/deletefromcart/{id}', 'CartController@deleteProduct');
 Route::get('/getquantity/{id}', 'CartController@getQuantity');
@@ -57,11 +57,11 @@ Route::post('/addwish/{id}', 'WishlistController@addWish')->middleware('jwt.auth
 Route::post('/deletewish/{id}', 'WishlistController@deleteWish')->middleware('jwt.auth');
 
 
-Route::get('/test', function(){
+Route::get('/test', function () {
     return 'Login olunub';
 })->middleware('jwt.auth');
 
 
-Route::get('/vendor/test', function(){
+Route::get('/vendor/test', function () {
     return 'Vendor Page';
-})->middleware(['jwt.auth', 'is_vendor']);//burda jwt.auth userin login olub olmadigini yoxlayir, gel kodlarionda bir bug gosterim))
+})->middleware(['jwt.auth', 'is_vendor']);

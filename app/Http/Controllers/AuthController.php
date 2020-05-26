@@ -8,14 +8,13 @@ use Hash;
 use Validator;
 
 class AuthController extends Controller
-{    
+{
     public function register(Request $request)
     {
-        //you can write Validator here
-        $validation = Validator::make($request->all(),[
+        $validation = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email',
-            'password'=> 'required',
+            'password' => 'required',
         ]);
         if ($validation->fails()) {
             return response()->json([
@@ -25,11 +24,11 @@ class AuthController extends Controller
         }
         $request->type = ($request->type == null || $request->type != 'vendor') ? 'user' : 'vendor';
         $user = User::create([
-             'name'     => $request->name,
-             'email'    => $request->email,
-             'password' => $request->password,
-             'type'     => $request->type,
-         ]);
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => $request->password,
+            'type'     => $request->type,
+        ]);
         $token = auth()->login($user);
         return response()->json([
             'success'    => true,
@@ -39,11 +38,11 @@ class AuthController extends Controller
     }
 
     public function update(Request $request)
-    {   
-        $validation = Validator::make($request->all(),[
+    {
+        $validation = Validator::make($request->all(), [
             'name' => 'required|max:9',
             'email' => 'required|email',
-            'password'=> 'required',
+            'password' => 'required',
         ]);
         if ($validation->fails()) {
             return response()->json([
@@ -51,7 +50,7 @@ class AuthController extends Controller
                 'data' => $validation->errors()->all(),
             ]);
         }
-        $user = auth()->user(); 
+        $user = auth()->user();
         if ($user) {
             $user = User::where('id', $user->id)->update([
                 'name'     => $request->name,
@@ -66,20 +65,20 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-    {   
+    {
         $credentials = $request->only('email', 'password', 'type');
-        $validation = Validator::make($credentials,[
+        $validation = Validator::make($credentials, [
             'email' => 'required|email',
-            'password'=> 'required',
-            'type'=> 'required',
+            'password' => 'required',
+            'type' => 'required',
         ]);
         if ($validation->fails()) {
             return response()->json([
                 'success' => false,
                 'data' => $validation->errors()->all(),
             ]);
-        }       
-        if (! $user = auth()->attempt($credentials)) {
+        }
+        if (!$user = auth()->attempt($credentials)) {
             return response()->json([
                 'success' => false,
                 'data'  => 'Wrong Crendentials'
@@ -99,9 +98,9 @@ class AuthController extends Controller
     }
 
     public function getAuthUser(Request $request)
-    {        
-        $user = auth()->user(); 
- 
+    {
+        $user = auth()->user();
+
         return response()->json(['user' => $user]);
     }
 }
